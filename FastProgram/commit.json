@@ -1,0 +1,34 @@
+{
+     "Files": [
+          {
+               "name": "dta_main.py",
+               "commit": "Data object IMPS to manage computation",
+               "last_modified": "Tue Nov 16 16:57:53 2021",
+               "info": "It is usefull to handle with data"
+          },
+          {
+               "name": "dtatools.py",
+               "commit": "Here the declaration of the principles functions of the program",
+               "last_modified": "Sun Nov 14 22:34:12 2021",
+               "info": "Core of the program"
+          },
+          {
+               "name": "compute.py",
+               "commit": "main program",
+               "last_modified": "Wed Nov 17 17:38:18 2021",
+               "info": "the compute function is the more similar to a main function"
+          },
+          {
+               "name": "FILE_setup.py",
+               "commit": "need to deal with the data file",
+               "last_modified": "Fri Nov 19 12:18:53 2021",
+               "info": "Read the documentation to see the file format requested"
+          },
+          {
+               "name": "fastDTA.py",
+               "commit": "CLI to execute the program",
+               "last_modified": "Thu Nov 18 11:34:55 2021",
+               "info": "Read the documentation to see how to use it"
+          }
+     ]
+}

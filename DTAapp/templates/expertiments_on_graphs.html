@@ -1,0 +1,102 @@
+<pre>from bokeh.plotting import ColumnDataSource, figure#, curdoc 
+</pre> <br>
+<pre>from bokeh.plotting import show as showPlot
+</pre> <br>
+<pre>from bokeh.io import show, curdoc
+</pre> <br>
+<pre>from bokeh.models import CustomJS, RadioButtonGroup
+</pre> <br>
+<pre>from bokeh.layouts import layout
+</pre> <br>
+<pre>from bokeh.models import HoverTool
+</pre> <br>
+<pre>LABELS = ["DTA", "IMPS", "RESIDUALS"]
+</pre> <br>
+<pre>
+</pre> <br>
+<pre>radio_button_group = RadioButtonGroup(labels=LABELS, active=0)
+</pre> <br>
+<pre>radio_button_group.js_on_click(CustomJS(code="""
+</pre> <br>
+<pre>        console.log('radio_button_group: active=' + this.active, this.toString())
+</pre> <br>
+<pre>        """))
+</pre> <br>
+<pre>
+</pre> <br>
+<pre>def update(attrname, old, new):
+</pre> <br>
+<pre>    #if radio_button_group.active == "1":
+</pre> <br>
+<pre>    #breakpoint()
+</pre> <br>
+<pre>    #if radio_button_group.active == 1:
+</pre> <br>
+<pre>    #p.line(x,y2)
+</pre> <br>
+<pre>    #curdoc().add_root(layout)
+</pre> <br>
+<pre>    source.data["x"] = [4,5,3,2,1,10]
+</pre> <br>
+<pre>    #p = figure
+</pre> <br>
+<pre>    #p.circle(x,y2)
+</pre> <br>
+<pre>    p.title.text = "new"
+</pre> <br>
+<pre>    #showIO(p)
+</pre> <br>
+<pre>#showIO(radio_button_group)
+</pre> <br>
+<pre>#first create the figure as a general object
+</pre> <br>
+<pre># Then you can add lines with the method "line"
+</pre> <br>
+<pre>source = ColumnDataSource(data = dict(x = [1,2,3,4,5,6],
+</pre> <br>
+<pre>   y1 = [4,17,6,45,3,45],
+</pre> <br>
+<pre>y2= [6,-5,4,-3,2,-1],
+</pre> <br>
+<pre>nomi = ["ciao", "Nonno", "my", "yesterfay", "I am", "Pasqui"]
+</pre> <br>
+<pre>))
+</pre> <br>
+<pre>#if radio_button_group.active == 0:
+</pre> <br>
+<pre>p = figure(title="My first Bokeh plot", sizing_mode="stretch_width", x_axis_label="x", y_axis_label="y")
+</pre> <br>
+<pre>p.line(x="x",y="y1", source = source, legend_label = "first", line_color="blue",line_width=2)
+</pre> <br>
+<pre>#p.circle(x,y2, legend_label="second", size = 8,line_color= "black")
+</pre> <br>
+<pre>#breakpoint()
+</pre> <br>
+<pre>radio_button_group.on_change('active', update)   
+</pre> <br>
+<pre>TOOLTIPS=[
+</pre> <br>
+<pre>("index" ,"$index"),
+</pre> <br>
+<pre>("x", "@x"),
+</pre> <br>
+<pre>("y", "@y"),]
+</pre> <br>
+<pre>p.add_tools(HoverTool(tooltips=TOOLTIPS))
+</pre> <br>
+<pre>
+</pre> <br>
+<pre>layout = layout([
+</pre> <br>
+<pre>          #[div, spinner],
+</pre> <br>
+<pre>          [radio_button_group],
+</pre> <br>
+<pre>          [p],
+</pre> <br>
+<pre>           ])
+</pre> <br>
+<pre>curdoc().add_root(layout)
+</pre> <br>
+<pre>#showIO(layout)
+</pre> <br>

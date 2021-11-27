@@ -1,0 +1,52 @@
+<pre>from bokeh.plotting import ColumnDataSource, figure#, curdoc 
+from bokeh.plotting import show as showPlot
+from bokeh.io import show, curdoc
+from bokeh.models import CustomJS, RadioButtonGroup
+from bokeh.layouts import layout
+from bokeh.models import HoverTool
+LABELS = ["DTA", "IMPS", "RESIDUALS"]
+
+radio_button_group = RadioButtonGroup(labels=LABELS, active=0)
+radio_button_group.js_on_click(CustomJS(code="""
+        console.log('radio_button_group: active=' + this.active, this.toString())
+        """))
+
+def update(attrname, old, new):
+    #if radio_button_group.active == "1":
+    #breakpoint()
+    #if radio_button_group.active == 1:
+    #p.line(x,y2)
+    #curdoc().add_root(layout)
+    source.data["x"] = [4,5,3,2,1,10]
+    #p = figure
+    #p.circle(x,y2)
+    p.title.text = "new"
+    #showIO(p)
+#showIO(radio_button_group)
+#first create the figure as a general object
+# Then you can add lines with the method "line"
+source = ColumnDataSource(data = dict(x = [1,2,3,4,5,6],
+   y1 = [4,17,6,45,3,45],
+y2= [6,-5,4,-3,2,-1],
+nomi = ["ciao", "Nonno", "my", "yesterfay", "I am", "Pasqui"]
+))
+#if radio_button_group.active == 0:
+p = figure(title="My first Bokeh plot", sizing_mode="stretch_width", x_axis_label="x", y_axis_label="y")
+p.line(x="x",y="y1", source = source, legend_label = "first", line_color="blue",line_width=2)
+#p.circle(x,y2, legend_label="second", size = 8,line_color= "black")
+#breakpoint()
+radio_button_group.on_change('active', update)   
+TOOLTIPS=[
+("index" ,"$index"),
+("x", "@x"),
+("y", "@y"),]
+p.add_tools(HoverTool(tooltips=TOOLTIPS))
+
+layout = layout([
+          #[div, spinner],
+          [radio_button_group],
+          [p],
+           ])
+curdoc().add_root(layout)
+#showIO(layout)
+</pre>

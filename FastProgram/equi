@@ -1,0 +1,47 @@
+import pandas as pd 
+import numpy as np
+import sympy as sp
+"""
+class points():
+    def __init__(self, start, final, n_point, mainfold)
+        self.start = start
+        self.final = final
+        self.n_point = n_point
+        self.manifold=manifold
+"""
+
+def total_length_of_curve(start, final, manifold):
+    '''
+    This function compute the length of the curve. 
+    WE recognize the problem of using linspace when
+    we often deal with logaritmhic scale, but we wasn't
+    able to find other way
+    '''
+    epsilon = 1e-5
+    x = np.linspace(start +epsilon ,final,epsilon)
+    y = manifold(x)
+    x_previous = np.delete((np.append([start], x), -1)
+    y_previous = np.delete(np.append([manifold(start)], y), -1)
+    distances = (x-x_previous)**2+(y-y_previous)**2
+    length = np.sum(distances)
+    
+    return length
+
+def function_spaced(start, final, n_point, manifold):
+    '''
+    Get equispaced points on a curve.
+    It find the length of the curve as sum of 
+    small segment.
+    '''
+
+    length = total_length_of_curve(start,final,epsilon)
+    length_step = length/n_point
+    well_spaced_points = []
+    x = np.linspace(start,final,epsilon)
+    for point in x:
+        if total_length_of_curve(start, point, manifold) > length_step:
+            start = point
+            well_spaced_points.append(point)
+    return well_spaced_points    
+
+    
