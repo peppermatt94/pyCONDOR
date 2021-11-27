@@ -6,10 +6,8 @@ import matplotlib.pylab as plt
 from scipy.integrate import quad 
 import cvxpy as cp
 import matplotlib.colors as mcolors
-from scipy.linalg import toeplitz
 import sys
-sys.path.append("C:\\Script\\PythonLibrary")
-from LabLibrary import sci_notation_as_Benini_want
+
 
 
 def real_matrix_element(tau_n, omega_m, shape_factor, rbf_method):
@@ -128,81 +126,4 @@ def construct_convex_matrix(A_re, A_im, b_re, b_im, lambda_value, M):
 def tichonov_error(x, Q, c, b_re, b_im):
     return 0.5*(x.T@Q@x) + c.T@x ##+ b_re.T@b_re +b_im.T@b_im
 
-if __name__ == "__main__":
-    from IMPS_simulation import Y_sl
-    omega_vec = np.logspace(6,-2, 40)
-    lambda_val = 1
-    C = 4e-6*1e-5/(4e-6+1e-5)
-    R = 10
-    tau = R*C
-    tau_vec= 2*np.pi/omega_vec
-    tau_fine  = np.logspace(np.log10(tau_vec.min())-0.5,np.log10(tau_vec.max())+0.5,10*omega_vec.shape[0])
-    mu= shape_factor_estimation(omega_vec, rbf_method = "Gaussian")
-    real_matr= real_matrix(omega_vec, tau_vec, shape_factor = mu,rbf_method = "Gaussian" )
-    imag_matr= imag_matrix(omega_vec, tau_vec, shape_factor = mu, rbf_method = "Gaussian")
-    tich_matr= tichonov_matrix(tau_vec, shape_factor=mu, rbf_method = "Gaussian")  
 
-    N_RL = 1 # N_RL length of resistence plus inductance
-    A_re = np.zeros((omega_vec.size, tau_vec.size+N_RL))
-    A_re[:,N_RL:] = real_matr
-    A_re[:,0] = 1        
-    A_im = np.zeros((omega_vec.size, tau_vec.size+N_RL))
-    A_im[:,N_RL:] = imag_matr
-    A_im[:,0] = omega_vec
-    M = np.zeros((omega_vec.size+N_RL, tau_vec.size+N_RL))
-    M[N_RL:,N_RL:] = tich_matr
-
-# HERE PLOT OF THE SIMULATION IN IMPS-simulation.py OF PETER WORK
-    characteristic = plt.figure(figsize = (14,7))
-    fit_DTA = plt.figure(figsize = (14,7))
-    analysis = fit_DTA.add_gridspec(1, 2)
-    fit = fit_DTA.add_subplot(analysis[0,0])
-    DTA_plot = fit_DTA.add_subplot(analysis[0,1])
-    legend = ["$k_{ct} = 0 Hz$","$k_{ct} = 10 Hz$", "$k_{ct} = 50 Hz$","$k_{ct} = 100 Hz$","$k_{ct} = 200 Hz$"]
-    color_list = [color for color in mcolors.TABLEAU_COLORS.values()]
-    characteristic_time = np.zeros(5)
-    for list_number, k1 in enumerate([0,10,50,100,200]):
-        real, imag = Y_sl(omega_vec, C= C,tau = tau,C_sc=4e-6 ,k_2 = 10, k_1=k1)
-        fit.plot(real, -imag, "o", label = legend[list_number], c = color_list[list_number])
-        Q, c = construct_convex_matrix(A_re, A_im, real, imag, lambda_val, M)
-        N_out = c.shape[0]
-        x = cp.Variable(shape = N_out, value = np.ones(N_out))
-        h = np.zeros(N_out)
-        I = np.identity(N_out)    
-        prob = cp.Problem(cp.Minimize((1/2)*cp.quad_form(x,Q) + c@x))#, [x>=h])
-        prob.solve(verbose = True, eps_abs = 1E-10, eps_rel = 1E-10, sigma = 1.00e-08, 
-                   max_iter = 20000000, eps_prim_inf = 1E-5, eps_dual_inf = 1E-5)
-
-        gamma = x.value
-        DTA, out = come_back_to_DTA(gamma[N_RL:], tau_fine, tau_vec, mu, "Gaussian")
-        mu_z_re = A_re@gamma
-        mu_z_im = A_im@gamma
-        fit.plot(mu_z_re, -mu_z_im, "-", c = color_list[list_number])
-        DTA_plot.semilogx(out, DTA, c = color_list[list_number],label = legend[list_number])
-        maximum_search = np.abs(DTA[out>1e-3])
-        max_position = np.where(np.abs(DTA) == max(maximum_search))[0][0]
-        characteristic_time[list_number] = out[max_position]
-    ax1 = DTA_plot.twiny()
-    ax1.set_xscale("log")
-    ax1.set_xlim(DTA_plot.get_xlim())
-    ax1.set_xticks(characteristic_time)
-    names = [sci_notation_as_Benini_want(x) for x in characteristic_time]
-    ax1.set_xticklabels(names)
-    ax1.tick_params(axis="x", labelsize=8, labelrotation=70, labelleft = True) #, labelcolor="turquoise")
-    ax1.grid(True)
-    
-    for number, value in enumerate(characteristic_time):
-        ax1.get_xticklabels()[number].set_color(color_list[number]) 
-    
-    fit.legend()
-    fit.set_title("FIT IN NYQUIST PLOT")
-    fit.set_xlabel("$Y'(\omega)$")
-    fit.set_ylabel("$-Y''(\omega)$")
-
-    DTA_plot.legend()
-    DTA_plot.set_title("DTA SPECTRA")
-    DTA_plot.set_xlabel("$\\tau$"+" (s)")
-    DTA_plot.set_ylabel("DTA "+"$(V^{-1})$")
-    fit_DTA.suptitle("DTA ANALISYS OF PETER' SIMULATION")
-    fit_DTA.savefig("DTA_analysis.png", dpi=250, bbox_inches = "tight")
-    fit_DTA.show()
