@@ -62,34 +62,18 @@ def compute(IMPS_object, lambda_val):
     fig.savefig(alls+path1, dpi = 250)
     return path1, path2
 
-def interpolate(IMPS_object, value_of_treshold_derivative, type_of_interpolation):
+def interpolate(IMPS_object):
     model_real = interp1d(IMPS_object.omega, IMPS_object.H_prime)
     model_double_prime = interp1d(IMPS_object.omega, IMPS_object.H_double_prime)
-
     omega_vec= np.logspace(np.log10(IMPS_object.omega[1]), np.log10(IMPS_object.omega[-1]), 40)
     real = model_real(omega_vec)
-    imag = model_double_prime(omega_vec)    
-    if type_of_interpolation == "1":
-        omega_vec1, dxdy = range_Selection(real, omega_vec, value_of_treshold_derivative)
-
-    elif type_of_interpolation == "2":
-        omega_vec, dxdy = range_Selection(real, omega_vec, value_of_treshold_derivative)
-    elif type_of_interpolation == "3":
-        omega_vec, dxdy = range_Selection(real, omega_vec, value_of_treshold_derivative)
-        #there will be a dedicated function
-    elif type_of_interpolation == "4":
-        omega_vec, dxdy = range_Selection(real, omega_vec, value_of_treshold_derivative)
-        omega_vec = IMPS_object.omega
-        real = IMPS_object.H_prime
-        imag = IMPS_object.H_double_prime
-    
-    real = model_real(omega_vec)
     imag = model_double_prime(omega_vec)
-    return real, imag, omega_vec, dxdy
+    return real, imag, omega_vec
 
 
-def compute_bokeh(IMPS_object, lambda_val, voltage, value_of_treshold_derivative, type_of_interpolation, output_dataframe1, output_dataframe2, degree):
-    real, imag,omega_vec, dxdy = interpolate(IMPS_object, value_of_treshold_derivative, type_of_interpolation) 
+def compute_bokeh(IMPS_object, lambda_val, voltage, output_dataframe1, output_dataframe2, degree):
+    
+    real, imag,omega_vec= interpolate(IMPS_object) 
     tau_vec = 2*np.pi/omega_vec
     mu= DTA.shape_factor_estimation(omega_vec, rbf_method = "Gaussian")
     real_matr= DTA.real_matrix(omega_vec, tau_vec, shape_factor = mu,rbf_method = "Gaussian" )

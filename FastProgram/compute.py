@@ -10,11 +10,11 @@ def compute(IMPS_object,interpolation_point, lambda_val, degree, discretization_
     model_real = interp1d(IMPS_object.omega, IMPS_object.H_prime)
     model_double_prime = interp1d(IMPS_object.omega, IMPS_object.H_double_prime)
 
-    omega_vec= np.logspace(np.log10(IMPS_object.omega[6]) , np.log10(IMPS_object.omega[-1]), 40)
+    omega_vec= np.logspace(np.log10(IMPS_object.omega[0]) , np.log10(IMPS_object.omega[-1]), 40)
     real = model_real(omega_vec)
-    omega_vec = range_Selection(real, omega_vec ,value_of_treshold_derivative)
+    #omega_vec = range_Selection(real, omega_vec ,value_of_treshold_derivative)
    
-    real = model_real(omega_vec)
+    #real = model_real(omega_vec)
     imag = model_double_prime(omega_vec)
     tau_vec = 2*np.pi/omega_vec
     mu= DTA.shape_factor_estimation(omega_vec, rbf_method = "Gaussian") 
@@ -46,11 +46,12 @@ def compute(IMPS_object,interpolation_point, lambda_val, degree, discretization_
     mu_z_im = A_im@gamma
     #x=np.arange(0,50,0.1)
    
-    fit.plot(real,imag, "o", color = color, label= label)
+    fit.plot(IMPS_object.H_prime,IMPS_object.H_double_prime, "o", color = color, label= label)
     fit.plot(mu_z_re, mu_z_im, "--", color = color)
     path1 =  os.path.join('DTAapp', 'img', 'fit.png')
     alls = "D:\\DTA\\DTAtools\\DTAtools\\static\\"
     path2 =  os.path.join('DTAapp', 'img', 'dta.png')
     dta.semilogx(out, DTA_vec, color = color, label = label)
+    #dta.semilogx( 1/IMPS_object.omega , -IMPS_object.H_double_prime, "o", color = color)
     #fig.savefig(alls+path1, dpi = 250)
     

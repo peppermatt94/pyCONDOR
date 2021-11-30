@@ -14,10 +14,7 @@ from dta_main import IMPS
 import matplotlib.pylab as plt
 import numpy as np
 import matplotlib.colors as mcolors
-file_path = "C:\\Users\\pepermatt94\\OneDrive - Alma Mater Studiorum Università di Bologna\\Master_Thesis\\DRT\\IMPS_WO3BiVO4\\"
-file_path = file_path +"IMPS_WO3_BiVO4_blue_5mWamm.txt"
-alb = "C:\\Users\\pepermatt94\\Desktop\\datiNuovi.txt"
-
+import seaborn as sns
 
 class picked_data:
     def __init__(self, x,y, omega):
@@ -69,14 +66,17 @@ Voltages = Voltage_list(filename)
 if len(selected_voltages)==2:
     Voltages_list = Voltages[selected_voltages[0]:selected_voltages[1]]
 elif len(selected_voltages) == 1:
-    if selected_voltages == -1:
-        pass
+    if selected_voltages[0] == -1:
+        Voltages_list = Voltages
     else:
         Voltages_list = Voltages[selected_voltages[0]]
 
-color_list_until_green = palette((0,1,0), (1,1,0), int(len(Voltages)/2))
-color_list_until_yellow = palette((1,0.9,0), (1,0,0), int(len(Voltages)/2))
-color_list = color_list_until_green + color_list_until_yellow
+#color_list_until_green = palette((0,1,0), (1,1,0), int(len(Voltages)+1/2))
+#color_list_until_yellow = palette((1,0.9,0), (1,0,0), int(len(Voltages)+1/2))
+#color_list = color_list_until_green + color_list_until_yellow
+#color_list = palette((1,0,0), (1,1,0), int(len(Voltages)))
+color_list = sns.color_palette(None, len(Voltages))
+
 serie = np.arange(1,len(Voltages)*2+1, 1, dtype = int)
 serie = serie.reshape(len(Voltages),2)
 for step, dati in enumerate(serie):
@@ -96,7 +96,7 @@ for step, dati in enumerate(serie):
         #grid = fig.add_gridspec(1,2)
         #fit = fig.add_subplot(grid[0,0])
         #dta = fig.add_subplot(grid[0,1])
-        compute(imps,int(sys.argv[3]),  1,2, "Gaussian",  fit, dta, color_list[step], Voltages[step], 6e-3)
+        compute(imps,int(sys.argv[3]),  0.001,2, "Gaussian",  fit, dta, color_list[step], Voltages[step], 6e-3)
 fit.legend()
 fit.set_xlabel("Y'")
 fit.set_ylabel("Y''")
@@ -104,5 +104,5 @@ dta.set_xlabel("$\\tau (s)$")
 dta.set_ylabel("DTA"+"$(V^{-1})$")
 filename = filename.replace("cat", "CoFe-Bp")
 fig.suptitle(filename[:-4])
-#plt.savefig(filename[:-4] + ".png", dpi=250)
-plt.show()
+plt.savefig(filename[:-4] + ".png", dpi=250)
+plt.close()

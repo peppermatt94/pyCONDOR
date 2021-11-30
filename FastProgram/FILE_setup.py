@@ -9,7 +9,7 @@ def setting(H_prime, H_double_prime, filename):
    
 def Voltage_list(filename) : 
     Voltages = pd.read_csv(filename, delimiter = "\t", skiprows = 2, nrows=1)
-    list_of_voltages = [2*i for i in range(int((len(Voltages.columns)-1)/2))]
+    list_of_voltages = [2*i for i in range(int((len(Voltages.columns)+1)/2))]
     list_of_voltages.pop(0)
     Voltages = Voltages.columns[list_of_voltages]
     return Voltages

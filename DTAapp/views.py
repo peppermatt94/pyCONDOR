@@ -22,20 +22,12 @@ def DTA_webAPP(request):
     if request.method == 'POST' and "Compute" in request.POST:
         if form.is_valid():
             data = pd.read_csv(request.FILES["ImportData"],sep = "\t",  skiprows = [1,2])
-            imps, dta = main(data,float(form['treshold_derivative'].value()), form['method_of_discretization'].value(),float(form['regularization_parameter'].value()), int(form['regularization_order'].value()), form['type_of_interpolation'].value() , int(form['number_of_point'].value()), form['col_selection'].value())
+            imps, dta = main(data, form['method_of_discretization'].value(),float(form['regularization_parameter'].value()), int(form['regularization_order'].value()), int(form['number_of_point'].value()), form['col_selection'].value())
             fig = myfig(imps, dta)
             script, div = components(fig.layout)
             imps.to_csv("result_imps.csv", index = False)
             dta.to_csv("result_dta.csv", index = False)
             result = "Ok, boy"
-    if request.method == 'POST' and "Show interpolation" in request.POST:
-        if form.is_valid():
-            data = pd.read_csv(request.FILES["ImportData"],sep = "\t",  skiprows = [1,2])
-            real, imag,omega_vec , dxdy= interpolate_only(data,float(form['treshold_derivative'].value()), form['type_of_interpolation'].value() , int(form['number_of_point'].value()), form['col_selection'].value())
-            imps = pd.DataFrame({"freq":omega_vec, "H'":real, "H''":imag, "H1'":real, "H1''":imag})
-            dta = pd.DataFrame({"freq":omega_vec, "real":real})
-            fig = myfig(imps,dta)
-            script, div = components(fig.layout)
     context =  {'form': form, 'script':script, 'div':div, "result":result}
     return HttpResponse(render(request, "dta_webapp.html", context))
 

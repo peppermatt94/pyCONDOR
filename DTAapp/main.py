@@ -14,15 +14,15 @@ import matplotlib.colors as mcolors
 import pandas as pd
 from django.conf import settings
 
-def main(file, value_of_treshold_derivative, rbf_method, lambda_val, degree_of_thickonov, interpolation_type, n_interpolation_point, col_selection):
+def main(file, rbf_method, lambda_val, degree_of_thickonov, n_interpolation_point, col_selection):
     
     Voltages = Voltage_list(file)
     selected_voltages = list(map(lambda x:int(x), col_selection.split(":")))
     if len(selected_voltages)==2:
         Voltages_list = Voltages[selected_voltages[0]:selected_voltages[1]]
     elif len(selected_voltages) == 1:
-        if selected_voltages == -1:
-           pass
+        if selected_voltages[0] == -1:
+           Voltages_list = Voltages 
         else:
             Voltages_list = [Voltages[selected_voltages[0]]]
     
@@ -37,7 +37,7 @@ def main(file, value_of_treshold_derivative, rbf_method, lambda_val, degree_of_t
         if Voltages[step] in Voltages_list:
             setting(dati[0],dati[1],file)
             imps = IMPS.from_file("trainingData.txt")
-            df_data, df_dta = compute_bokeh(imps, lambda_val, Voltages[step], value_of_treshold_derivative, interpolation_type, df_data, df_dta, degree_of_thickonov)
+            df_data, df_dta = compute_bokeh(imps, lambda_val, Voltages[step], df_data, df_dta, degree_of_thickonov)
     dati_interp_fit = pd.DataFrame(df_data)
     DTA_tau = pd.DataFrame(df_dta)
     dati_interp_fit.to_csv("interp_fit.csv", index = False)
@@ -51,8 +51,8 @@ def interpolate_only(file, value_of_treshold_derivative, interpolation_type, n_i
     if len(selected_voltages)==2:
         Voltages_list = Voltages[selected_voltages[0]:selected_voltages[1]]
     elif len(selected_voltages) == 1:
-        if selected_voltages == -1:
-           pass
+        if selected_voltages[0] == -1:
+           Voltage_list =Voltages
         else:
             Voltages_list = [Voltages[selected_voltages[0]]]
     
