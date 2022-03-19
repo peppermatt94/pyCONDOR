@@ -14,11 +14,12 @@ import json
 def DTA_webAPP(request):
     context={}
     result = None
-    imps = pd.DataFrame(columns=["1","2","3","4","5"]) # i need this to avoid problem in create_grid in plotting.py
+    imps = pd.DataFrame(columns=["1","2","3","4","5", "6", "7"]) # i need this to avoid problem in create_grid in plotting.py
     dta = pd.DataFrame(columns = ["3","4"])
     fig = myfig(imps,dta)
     script,div = components(fig.layout) 
-    form = DTAselection(request.POST,request.FILES)
+    form = DTAselection(request.POST, request.FILES)
+    file = None
     if request.method == 'POST' and "Compute" in request.POST:
         if form.is_valid():
             data = pd.read_csv(request.FILES["ImportData"],sep = "\t",  skiprows = [1,2])
@@ -28,7 +29,8 @@ def DTA_webAPP(request):
             imps.to_csv("result_imps.csv", index = False)
             dta.to_csv("result_dta.csv", index = False)
             result = "Ok, boy"
-    context =  {'form': form, 'script':script, 'div':div, "result":result}
+    context =  {'form': form, 'script':script,
+                        'div':div,  "result":result}
     return HttpResponse(render(request, "dta_webapp.html", context))
 
 def download_result(request):

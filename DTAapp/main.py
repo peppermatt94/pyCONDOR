@@ -15,7 +15,11 @@ import pandas as pd
 from django.conf import settings
 
 def main(file, rbf_method, lambda_val, degree_of_thickonov, n_interpolation_point, col_selection):
-    
+    rbf = {"1": "Gaussian",
+           "2": "Inverse Quadric",
+           "3": "Inverse Quadratic"
+            }
+    rbf_method = rbf.get(rbf_method) 
     Voltages = Voltage_list(file)
     selected_voltages = list(map(lambda x:int(x), col_selection.split(":")))
     if len(selected_voltages)==2:
@@ -37,7 +41,7 @@ def main(file, rbf_method, lambda_val, degree_of_thickonov, n_interpolation_poin
         if Voltages[step] in Voltages_list:
             setting(dati[0],dati[1],file)
             imps = IMPS.from_file("trainingData.txt")
-            df_data, df_dta = compute_bokeh(imps, lambda_val, Voltages[step], df_data, df_dta, degree_of_thickonov)
+            df_data, df_dta = compute_bokeh(imps, lambda_val, Voltages[step],rbf_method, df_data, df_dta, degree_of_thickonov)
     dati_interp_fit = pd.DataFrame(df_data)
     DTA_tau = pd.DataFrame(df_dta)
     dati_interp_fit.to_csv("interp_fit.csv", index = False)

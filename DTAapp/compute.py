@@ -71,16 +71,18 @@ def interpolate(IMPS_object):
     return real, imag, omega_vec
 
 
-def compute_bokeh(IMPS_object, lambda_val, voltage, output_dataframe1, output_dataframe2, degree):
+def compute_bokeh(IMPS_object, lambda_val, voltage, rbf, output_dataframe1,
+                  output_dataframe2, degree):
     
     real, imag,omega_vec= interpolate(IMPS_object) 
     tau_vec = 2*np.pi/omega_vec
-    mu= DTA.shape_factor_estimation(omega_vec, rbf_method = "Gaussian")
-    real_matr= DTA.real_matrix(omega_vec, tau_vec, shape_factor = mu,rbf_method = "Gaussian" )
-    imag_matr= DTA.imag_matrix(omega_vec, tau_vec, shape_factor = mu, rbf_method = "Gaussian")
-    tich_matr= DTA.tichonov_matrix(tau_vec, mu, "Gaussian", degree)  
+    mu = DTA.shape_factor_estimation(omega_vec, rbf_method=rbf)
+    real_matr = DTA.real_matrix(omega_vec, tau_vec, shape_factor=mu,
+                                rbf_method=rbf)
+    imag_matr = DTA.imag_matrix(omega_vec, tau_vec, shape_factor=mu, rbf_method = rbf)
+    tich_matr = DTA.tichonov_matrix(tau_vec, mu, rbf, degree)  
     
-    N_RL = 0 # N_RL length of resistence plus inductance
+    N_RL = 1 # N_RL length of resistence plus inductance
     A_re = np.zeros((omega_vec.size, tau_vec.size+N_RL))
     A_re[:,N_RL:] = real_matr
     A_re[:,0] = 1        
@@ -89,7 +91,7 @@ def compute_bokeh(IMPS_object, lambda_val, voltage, output_dataframe1, output_da
     A_im[:,0] = omega_vec
     M =  np.zeros((omega_vec.size+N_RL, tau_vec.size+N_RL))
     M[N_RL:,N_RL:] = tich_matr
-    
+
     Q, c = DTA.construct_convex_matrix(A_re, A_im, real, imag, lambda_val, M)
     N_out = c.shape[0]
     x = cp.Variable(shape = N_out, value = np.ones(N_out))
@@ -102,13 +104,15 @@ def compute_bokeh(IMPS_object, lambda_val, voltage, output_dataframe1, output_da
     DTA_vec, out = DTA.come_back_to_DTA(gamma[N_RL:], IMPS_object.tau_fine, tau_vec, mu, "Gaussian")
     mu_z_re = A_re@gamma
     mu_z_im = A_im@gamma
-    
+    real_residual= real - mu_z_re
+    imag_residual = imag - mu_z_im
     output_dataframe1[f"freq {voltage}"] = omega_vec
     output_dataframe1[f"real {voltage}"] = real
     output_dataframe1[f"imag {voltage}"] = imag
     output_dataframe1[f"fit_real {voltage}"] = mu_z_re
-    output_dataframe1[f"fit_imag {voltage}"] = mu_z_im
+    output_dataframe1[f"fit_imag{voltage}"] = mu_z_im
+    output_dataframe1[f"real residual {voltage}"] =real_residual
+    output_dataframe1[f"imag residual {voltage}"] = imag_residual
     output_dataframe2[f"tau {voltage}"] = out
     output_dataframe2[f"DTA {voltage}"] = DTA_vec
-    
     return output_dataframe1, output_dataframe2

@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 discretization_methods =(
     ("1", "Gaussian"),
-("2", "C2 Matern"),
+("2", "Inverse Quadric"),
 ("3", "Inverse Quadratic")
     )
 orders = (
@@ -17,4 +17,5 @@ class DTAselection(forms.Form):
     number_of_point = forms.IntegerField(label = "Number of interpolation Point",  widget=forms.TextInput(attrs={'type':'number'}))
     regularization_order = forms.ChoiceField(label = "Tichonov regularization order", choices = orders, initial = "2")
     col_selection = forms.CharField(label = "Choice the columns to take into account in file in python style (for instance 1:3 for 1,2 column)")
-        
+
+    
