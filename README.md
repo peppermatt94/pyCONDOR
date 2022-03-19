@@ -16,8 +16,17 @@ The forms for the user input are 6: input file, radial basis function type, regu
 
 ### input file
 
-The input file must be a file with
+The input file must be a file as the following example:
  ![Alt Text](https://github.com/peppermatt94/pyCONDOR/blob/master/file.jpg)
 
+It can contain also a lot of column (more IMPS) but there are the followin rule: 
+ - The first column must be frequency column
+ - The following column are alternating of Y' (real part) Y''(immaginary part) of the IMPS.
 
+The rows of the files must be as follows:
+- the first row is an header of names
+- second row must be present and can contain whatever you want
+- third row is the information you want to appear in a plot legend
+
+From the third row on, there are the data. Try to be carefull to avoid missing values.
   
