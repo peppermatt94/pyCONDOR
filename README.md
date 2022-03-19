@@ -29,4 +29,19 @@ The rows of the files must be as follows:
 - third row is the information you want to appear in a plot legend
 
 From the third row on, there are the data. Try to be carefull to avoid missing values.
-  
+
+### Radial Basis Function
+
+The radial basis function to use, I recommend to use *gaussian*.
+
+### Regularization Parameter
+
+When the Tikhonov regularization is performed, the weight to give to the regularization is the regularization parameter. 0.001 is a recommended value. 
+
+### Number of interpolation points
+
+The data are interpolated due to Discipline Convex Programming problem if this is not done. The number of interpolated points is suggested as 40. 
+
+### Column to use 
+
+I a file like that show above, there are a lot of data. You can select the dataset to use. The number you put is the number of the dataset in the sequence of the column, not the number of the column. Actually a dataset is identified by two columns. For instance, if in the file are presents three datasets (i.e. 7 columns: 1 column of frequency, real part of the first dataset, imaginary part of the second dataset and so on), if select 1 you select the first dataset. With 1:3 you select the first and second dataset, and so on. 
